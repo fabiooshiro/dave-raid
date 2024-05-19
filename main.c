@@ -2,7 +2,7 @@
 
 #define NUM_ENEMIES 50
 
-#define MAX_QUESTIONS 10
+#define MAX_QUESTIONS 11
 #define MAX_ANSWER_LENGTH 50
 #define NUM_ANSWERS 4
 
@@ -50,15 +50,15 @@ void initialize_trivia(struct TriviaGame *game) {
     };
 
     struct TriviaAnswer question3Answers[NUM_ANSWERS] = {
-        {"Peer-to-peer"},
         {"Centralized"},
         {"Hierarchical"},
+        {"Peer-to-peer"},
         {"Decentralized"}
     };
     game->questions[2] = (struct TriviaQuestion) {
         .question = "What type of network architecture\ndoes Blockchain technology utilize?",
         .answers = {question3Answers[0], question3Answers[1], question3Answers[2], question3Answers[3]},
-        .correctAnswerIndex = 0
+        .correctAnswerIndex = 2
     };
 
     struct TriviaAnswer question4Answers[NUM_ANSWERS] = {
@@ -145,8 +145,20 @@ void initialize_trivia(struct TriviaGame *game) {
         .correctAnswerIndex = 0
     };
 
+    struct TriviaAnswer question11Answers[NUM_ANSWERS] = {
+        {"Proof of Work (PoW)"},
+        {"Proof of Stake (PoS)"},
+        {"Proof of Authority (PoA)"},
+        {"Proof of Concept (PoC)"}
+    };
+    game->questions[10] = (struct TriviaQuestion) {
+        .question = "Which consensus mechanism\nis used by Ethereum?",
+        .answers = {question11Answers[0], question11Answers[1], question11Answers[2], question11Answers[3]},
+        .correctAnswerIndex = 1
+    };
+
     game->selected = 0;
-    game->numQuestions = 10; // Update the total number of questions
+    game->numQuestions = MAX_QUESTIONS; // Update the total number of questions
     game->currentQuestionIndex = 0;
 }
 
@@ -267,7 +279,7 @@ void run_game(struct Game* game) {
     }
 
     if (game->points > game->next_level) {
-        game->next_level = game->points * 1.5;
+        game->next_level = (int)(game->points * 1.5);
         game->e[game->enemy_count].y = -10;
         game->e[game->enemy_count].x = 28 + riv_rand_uint(200);
         game->enemy_count++;
@@ -280,13 +292,12 @@ void run_game(struct Game* game) {
             RIV_CENTER, 128, 64, 1, RIV_COLOR_WHITE); // draw text
         riv->quit = true;
     } else {
-        riv_draw_text(riv_tprintf("HP %d Points %d", game->hp, game->points), RIV_SPRITESHEET_FONT_5X7,
+        riv_draw_text(riv_tprintf("HP %d Points %d N %d", game->hp, game->points, game->next_level), RIV_SPRITESHEET_FONT_5X7,
             RIV_CENTER, 128, 64, 1, RIV_COLOR_WHITE); // draw text
     }
 }
 
 void main() { // entry point
-    // riv_printf("game selected %d; correct %d\n", 1, 2);
     struct Game game;
     game.enemy_count = 1;
     game.x = 128, game.y = 170; // red dot position
@@ -306,6 +317,7 @@ void main() { // entry point
     }
     struct TriviaGame triviaGame;
     initialize_trivia(&triviaGame);
+    riv->target_fps = 30;
     triviaGame.currentQuestionIndex = riv_rand_uint(triviaGame.numQuestions);
     do { // main loop
         if (game.trivia == 0) {
