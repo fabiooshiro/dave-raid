@@ -13,14 +13,14 @@ struct TriviaAnswer {
 struct TriviaQuestion {
     char question[100];
     struct TriviaAnswer answers[4];
-    int correctAnswerIndex;
+    int correct_answer_index;
 };
 
 struct TriviaGame {
     struct TriviaQuestion questions[MAX_QUESTIONS];
-    int currentQuestionIndex;
-    int numQuestions;
-    int showRes;
+    int current_question_index;
+    int num_questions;
+    int trivia_step;
     int selected;
 };
 
@@ -34,7 +34,7 @@ void initialize_trivia(struct TriviaGame *game) {
     game->questions[0] = (struct TriviaQuestion) {
         .question = "What is the primary benefit\nof using Blockchain technology\nin a city's infrastructure?",
         .answers = {question1Answers[0], question1Answers[1], question1Answers[2], question1Answers[3]},
-        .correctAnswerIndex = 3
+        .correct_answer_index = 3
     };
 
     struct TriviaAnswer question2Answers[NUM_ANSWERS] = {
@@ -46,7 +46,7 @@ void initialize_trivia(struct TriviaGame *game) {
     game->questions[1] = (struct TriviaQuestion) {
         .question = "Which of the following is\na key characteristic\nof Blockchain technology?",
         .answers = {question2Answers[0], question2Answers[1], question2Answers[2], question2Answers[3]},
-        .correctAnswerIndex = 1
+        .correct_answer_index = 1
     };
 
     struct TriviaAnswer question3Answers[NUM_ANSWERS] = {
@@ -58,7 +58,7 @@ void initialize_trivia(struct TriviaGame *game) {
     game->questions[2] = (struct TriviaQuestion) {
         .question = "What type of network architecture\ndoes Blockchain technology utilize?",
         .answers = {question3Answers[0], question3Answers[1], question3Answers[2], question3Answers[3]},
-        .correctAnswerIndex = 2
+        .correct_answer_index = 2
     };
 
     struct TriviaAnswer question4Answers[NUM_ANSWERS] = {
@@ -70,7 +70,7 @@ void initialize_trivia(struct TriviaGame *game) {
     game->questions[3] = (struct TriviaQuestion) {
         .question = "Which application is NOT typically\nassociated with Blockchain technology?",
         .answers = {question4Answers[0], question4Answers[1], question4Answers[2], question4Answers[3]},
-        .correctAnswerIndex = 1
+        .correct_answer_index = 1
     };
 
     struct TriviaAnswer question5Answers[NUM_ANSWERS] = {
@@ -82,7 +82,7 @@ void initialize_trivia(struct TriviaGame *game) {
     game->questions[4] = (struct TriviaQuestion) {
         .question = "Which platform is commonly\nused for deploying smart contracts?",
         .answers = {question5Answers[0], question5Answers[1], question5Answers[2], question5Answers[3]},
-        .correctAnswerIndex = 0
+        .correct_answer_index = 0
     };
 
     struct TriviaAnswer question6Answers[NUM_ANSWERS] = {
@@ -94,7 +94,7 @@ void initialize_trivia(struct TriviaGame *game) {
     game->questions[5] = (struct TriviaQuestion) {
         .question = "Which cryptocurrency is known\nfor its focus on speed and low fees?",
         .answers = {question6Answers[0], question6Answers[1], question6Answers[2], question6Answers[3]},
-        .correctAnswerIndex = 1
+        .correct_answer_index = 1
     };
 
     struct TriviaAnswer question7Answers[NUM_ANSWERS] = {
@@ -106,7 +106,7 @@ void initialize_trivia(struct TriviaGame *game) {
     game->questions[6] = (struct TriviaQuestion) {
         .question = "Which consensus mechanism\nis used by Bitcoin?",
         .answers = {question7Answers[0], question7Answers[1], question7Answers[2], question7Answers[3]},
-        .correctAnswerIndex = 0
+        .correct_answer_index = 0
     };
 
     struct TriviaAnswer question8Answers[NUM_ANSWERS] = {
@@ -118,7 +118,7 @@ void initialize_trivia(struct TriviaGame *game) {
     game->questions[7] = (struct TriviaQuestion) {
         .question = "Which cryptographic techniques\nare commonly used in Blockchain?",
         .answers = {question8Answers[0], question8Answers[1], question8Answers[2], question8Answers[3]},
-        .correctAnswerIndex = 3
+        .correct_answer_index = 3
     };
 
     struct TriviaAnswer question9Answers[NUM_ANSWERS] = {
@@ -130,7 +130,7 @@ void initialize_trivia(struct TriviaGame *game) {
     game->questions[8] = (struct TriviaQuestion) {
         .question = "Which term describes the main\nfeature of a Blockchain?",
         .answers = {question9Answers[0], question9Answers[1], question9Answers[2], question9Answers[3]},
-        .correctAnswerIndex = 0
+        .correct_answer_index = 0
     };
 
     struct TriviaAnswer question10Answers[NUM_ANSWERS] = {
@@ -142,7 +142,7 @@ void initialize_trivia(struct TriviaGame *game) {
     game->questions[9] = (struct TriviaQuestion) {
         .question = "What type of access control\nis commonly used in public\nBlockchain networks?",
         .answers = {question10Answers[0], question10Answers[1], question10Answers[2], question10Answers[3]},
-        .correctAnswerIndex = 0
+        .correct_answer_index = 0
     };
 
     struct TriviaAnswer question11Answers[NUM_ANSWERS] = {
@@ -154,23 +154,23 @@ void initialize_trivia(struct TriviaGame *game) {
     game->questions[10] = (struct TriviaQuestion) {
         .question = "Which consensus mechanism\nis used by Ethereum?",
         .answers = {question11Answers[0], question11Answers[1], question11Answers[2], question11Answers[3]},
-        .correctAnswerIndex = 1
+        .correct_answer_index = 1
     };
 
     game->selected = 0;
-    game->numQuestions = MAX_QUESTIONS; // Update the total number of questions
-    game->currentQuestionIndex = 0;
+    game->num_questions = MAX_QUESTIONS; // Update the total number of questions
+    game->current_question_index = 0;
 }
 
 int check_answer(struct TriviaGame *game) {
-    int correctAnswerIndex = game->questions[game->currentQuestionIndex].correctAnswerIndex;
-    riv_printf("game selected %d; correct %d\n", game->selected, correctAnswerIndex);
-    return (game->selected == correctAnswerIndex);
+    int correct_answer_index = game->questions[game->current_question_index].correct_answer_index;
+    riv_printf("game selected %d; correct %d\n", game->selected, correct_answer_index);
+    return (game->selected == correct_answer_index);
 }
 
 void display_result(struct TriviaGame *game) {
     if (riv->keys[RIV_GAMEPAD_L2].release) {
-        game->showRes = 2;
+        game->trivia_step = 2;
     }
     int ok = check_answer(game);
     if (ok) {
@@ -197,24 +197,28 @@ void display_question(struct TriviaGame *game) {
         game->selected = 0;
     }
     if (riv->keys[RIV_GAMEPAD_L2].release) {
-        game->showRes = 1;
+        game->trivia_step = 1;
     } else {
-        riv_draw_text(riv_tprintf("%s", game->questions[game->currentQuestionIndex].question), RIV_SPRITESHEET_FONT_5X7,
+        riv_draw_text(riv_tprintf("%s", game->questions[game->current_question_index].question), RIV_SPRITESHEET_FONT_5X7,
             RIV_CENTER, 128, 64, 1, RIV_COLOR_WHITE);
-        for (int i = 0; i < 4; i++) {
+        int i = 0;
+        for (; i < 4; i++) {
             if (game->selected == i) {
-                riv_draw_text(riv_tprintf("%d) %s", i+1, game->questions[game->currentQuestionIndex].answers[i].text), RIV_SPRITESHEET_FONT_5X7,
+                riv_draw_text(riv_tprintf("%d) %s", i+1, game->questions[game->current_question_index].answers[i].text), RIV_SPRITESHEET_FONT_5X7,
                     RIV_CENTER, 128, 94+(i*20), 1, RIV_COLOR_YELLOW);
             } else {
-                riv_draw_text(riv_tprintf("%d) %s", i+1, game->questions[game->currentQuestionIndex].answers[i].text), RIV_SPRITESHEET_FONT_5X7,
+                riv_draw_text(riv_tprintf("%d) %s", i+1, game->questions[game->current_question_index].answers[i].text), RIV_SPRITESHEET_FONT_5X7,
                     RIV_CENTER, 128, 94+(i*20), 1, RIV_COLOR_WHITE);
             }
         }
+        riv_draw_text("up or down to select.\n'a' to answer.",
+            RIV_SPRITESHEET_FONT_5X7,
+            RIV_CENTER, 128, 104+(i*20), 1, RIV_COLOR_BLUE);
     }
 }
 
 void run_trivia(struct TriviaGame *game) {
-    if (game->showRes) {
+    if (game->trivia_step) {
         display_result(game);
     } else {
         display_question(game);
@@ -295,6 +299,9 @@ void run_game(struct Game* game) {
         riv_draw_text(riv_tprintf("HP %d Points %d N %d", game->hp, game->points, game->next_level), RIV_SPRITESHEET_FONT_5X7,
             RIV_CENTER, 128, 64, 1, RIV_COLOR_WHITE); // draw text
     }
+    riv_draw_text("left, right, up, down to move.\n'x' to fire.",
+            RIV_SPRITESHEET_FONT_5X7,
+            RIV_CENTER, 128, 230, 1, RIV_COLOR_BLUE);
 }
 
 void main() { // entry point
@@ -315,20 +322,20 @@ void main() { // entry point
         game.e[i].x = -10;
         game.e[i].y = 100;
     }
-    struct TriviaGame triviaGame;
-    initialize_trivia(&triviaGame);
+    struct TriviaGame trivia_game;
+    initialize_trivia(&trivia_game);
     riv->target_fps = 30;
-    triviaGame.currentQuestionIndex = riv_rand_uint(triviaGame.numQuestions);
+    trivia_game.current_question_index = riv_rand_uint(trivia_game.num_questions - 1);
     do { // main loop
         if (game.trivia == 0) {
             run_game(&game);
         } else {
-            run_trivia(&triviaGame);
-            if (triviaGame.showRes == 2) {
+            run_trivia(&trivia_game);
+            if (trivia_game.trivia_step == 2) {
                 game.trivia = 0;
-                triviaGame.showRes = 0;
-                triviaGame.selected = 0;
-                triviaGame.currentQuestionIndex = riv_rand_uint(triviaGame.numQuestions);
+                trivia_game.trivia_step = 0;
+                trivia_game.selected = 0;
+                trivia_game.current_question_index = riv_rand_uint(trivia_game.num_questions - 1);
             }
         }
     } while(riv_present()); // refresh screen and wait next frame
