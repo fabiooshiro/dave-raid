@@ -5,6 +5,8 @@
 #define MAX_QUESTIONS 15
 #define MAX_ANSWER_LENGTH 50
 #define NUM_ANSWERS 4
+#define TILE_SIZE 70
+#define GAME_SPRITESHEET 1
 
 struct TriviaAnswer
 {
@@ -335,7 +337,7 @@ void run_game(struct Game *game)
     if (riv->keys[RIV_GAMEPAD_UP].down)
         game->y--;
     if (riv->keys[RIV_GAMEPAD_DOWN].down)
-        game->y++;
+        game->y += 2;
     if (riv->keys[RIV_GAMEPAD_LEFT].down)
         game->x_momentum -= game->x_push;
     if (riv->keys[RIV_GAMEPAD_RIGHT].down)
@@ -353,7 +355,10 @@ void run_game(struct Game *game)
     riv_clear(RIV_COLOR_BLUE);                                             // clear screen
     riv_draw_rect_fill(0, 200, 256, 56, RIV_COLOR_PEACH);                  // draw beach
     riv_draw_rect_fill(game->fire_x + 1, 0, 1, game->y, RIV_COLOR_YELLOW); // draw beach
-    riv_draw_circle_fill(game->x, game->y, 8, RIV_COLOR_RED);              // draw red dot
+    int sprite = (riv->frame / 4) % 4;
+    riv_draw_sprite(sprite, GAME_SPRITESHEET, game->x - 7, game->y, 1, 1, 1, 1);
+
+    // riv_draw_circle_fill(game->x, game->y, 8, RIV_COLOR_RED); // draw red dot
 
     for (int i = 0; i < game->enemy_count; i++)
     {
@@ -415,6 +420,7 @@ void push_back_enemies(struct Game *game)
 
 void main()
 { // entry point
+    riv_make_spritesheet(riv_make_image("ship.png", 0), 16, 16);
     struct Game game;
     game.enemy_count = 1;
     game.x = 128, game.y = 170; // red dot position
