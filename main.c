@@ -164,7 +164,6 @@ void initialize_trivia(struct TriviaGame *game) {
 
 int check_answer(struct TriviaGame *game) {
     int correct_answer_index = game->questions[game->current_question_index].correct_answer_index;
-    riv_printf("game selected %d; correct %d\n", game->selected, correct_answer_index);
     return (game->selected == correct_answer_index);
 }
 
@@ -272,6 +271,8 @@ void run_game(struct Game* game) {
             game->points += 1;
             game->e[i].x = 28 + riv_rand_uint(200);
             game->e[i].y = -100;
+            // Output scores on the output card
+            riv->outcard_len = riv_snprintf((char*)riv->outcard, RIV_SIZE_OUTCARD, "JSON{\"score\":%d}", game->points);
         }
         if (game->e[i].y > 256) {
             if (game->e[i].x > 0) {
@@ -300,8 +301,8 @@ void run_game(struct Game* game) {
             RIV_CENTER, 128, 64, 1, RIV_COLOR_WHITE); // draw text
     }
     riv_draw_text("left, right, up, down to move.\n'x' to fire.",
-            RIV_SPRITESHEET_FONT_5X7,
-            RIV_CENTER, 128, 230, 1, RIV_COLOR_BLUE);
+        RIV_SPRITESHEET_FONT_5X7,
+        RIV_CENTER, 128, 230, 1, RIV_COLOR_BLUE);
 }
 
 void main() { // entry point
