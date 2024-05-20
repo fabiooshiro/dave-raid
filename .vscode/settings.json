@@ -3,11 +3,15 @@
         "GAMEPAD",
         "Hyperledger",
         "Litecoin",
+        "mksqfs",
+        "Ospeed",
         "outcard",
         "Permissioned",
         "Permissionless",
+        "rivemu",
         "Sidechains",
         "spritesheet",
-        "SPRITESHEET"
+        "SPRITESHEET",
+        "sqfs"
     ]
 }

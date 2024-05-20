@@ -358,8 +358,6 @@ void run_game(struct Game *game)
     int sprite = (riv->frame / 4) % 4;
     riv_draw_sprite(sprite, GAME_SPRITESHEET, game->x - 7, game->y, 1, 1, 1, 1);
 
-    // riv_draw_circle_fill(game->x, game->y, 8, RIV_COLOR_RED); // draw red dot
-
     for (int i = 0; i < game->enemy_count; i++)
     {
         game->e[i].y++;
@@ -394,6 +392,12 @@ void run_game(struct Game *game)
     }
     game->fire_x = -10;
     game->cool_down--;
+    if (game->x > 256) {
+        game->x = 0;
+    }
+    if (game->x < 0) {
+        game->x = 256;
+    }
     if (game->hp <= 0)
     {
         riv_draw_text(riv_tprintf("GAME OVER\n\nPoints %d", game->points), RIV_SPRITESHEET_FONT_5X7,
