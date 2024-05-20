@@ -2,7 +2,7 @@
 
 #define NUM_ENEMIES 50
 
-#define MAX_QUESTIONS 11
+#define MAX_QUESTIONS 15
 #define MAX_ANSWER_LENGTH 50
 #define NUM_ANSWERS 4
 
@@ -26,6 +26,36 @@ struct TriviaGame
     int trivia_step;
     int selected;
     int points;
+};
+
+riv_waveform_desc shoot_sfx = {
+    .id = 102,
+    .type = RIV_WAVEFORM_PULSE,
+    .attack = 0.05f,
+    .decay = 0.05f,
+    .sustain = 0.15f,
+    .release = 0.075f,
+    .start_frequency = 880.0f,
+    .end_frequency = 220.0f,
+    .amplitude = 0.15f,
+    .sustain_level = 0.25f,
+    .duty_cycle = 0.65f,
+    .pan = 0.0f,
+};
+
+riv_waveform_desc explosion_sfx = {
+    .id = 105,
+    .type = RIV_WAVEFORM_NOISE,
+    .attack = 0.025f,
+    .decay = 0.1f,
+    .sustain = 0.5f,
+    .release = 0.025f,
+    .start_frequency = 110.0f,
+    .end_frequency = 27.0f,
+    .amplitude = 0.25f,
+    .sustain_level = 0.5f,
+    .duty_cycle = 0.5f,
+    .pan = 0.0f,
 };
 
 void initialize_trivia(struct TriviaGame *game)
@@ -82,7 +112,7 @@ void initialize_trivia(struct TriviaGame *game)
 
     struct TriviaAnswer question6Answers[NUM_ANSWERS] = {
         {"Bitcoin"},
-        {"Litecoin"},
+        {"Solana"},
         {"Ethereum"},
         {"Ripple"}};
     game->questions[5] = (struct TriviaQuestion){
@@ -140,8 +170,48 @@ void initialize_trivia(struct TriviaGame *game)
         .answers = {question11Answers[0], question11Answers[1], question11Answers[2], question11Answers[3]},
         .correct_answer_index = 1};
 
+    struct TriviaAnswer question12Answers[NUM_ANSWERS] = {
+        {"Layer 0"},
+        {"Sharding"},
+        {"Layer 1"},
+        {"Layer 2"}};
+    game->questions[11] = (struct TriviaQuestion){
+        .question = "Cartesi primarily operates\non which layer of the Blockchain?",
+        .answers = {question12Answers[0], question12Answers[1], question12Answers[2], question12Answers[3]},
+        .correct_answer_index = 3};
+
+    struct TriviaAnswer question13Answers[NUM_ANSWERS] = {
+        {"Desktops"},
+        {"Embedded systems"},
+        {"Mobile devices"},
+        {"RISC-V architecture"}};
+    game->questions[12] = (struct TriviaQuestion){
+        .question = "Cartesi's technology stack\nis based on which architecture?",
+        .answers = {question13Answers[0], question13Answers[1], question13Answers[2], question13Answers[3]},
+        .correct_answer_index = 3};
+
+    struct TriviaAnswer question14Answers[NUM_ANSWERS] = {
+        {"Smart contracts"},
+        {"Decentralized applications"},
+        {"Rive's games"},
+        {"All of the above"}};
+    game->questions[13] = (struct TriviaQuestion){
+        .question = "What kind of applications can\nbe developed using Cartesi?",
+        .answers = {question14Answers[0], question14Answers[1], question14Answers[2], question14Answers[3]},
+        .correct_answer_index = 3};
+
+    struct TriviaAnswer question15Answers[NUM_ANSWERS] = {
+        {"Blockchain nodes"},
+        {"Sidechains"},
+        {"Off-chain computation"},
+        {"Privacy solutions"}};
+    game->questions[14] = (struct TriviaQuestion){
+        .question = "What unique feature does Cartesi\nprovide compared to other\nBlockchain platforms?",
+        .answers = {question15Answers[0], question15Answers[1], question15Answers[2], question15Answers[3]},
+        .correct_answer_index = 2};
+
     game->selected = 0;
-    game->num_questions = MAX_QUESTIONS; // Update the total number of questions
+    game->num_questions = MAX_QUESTIONS;
     game->current_question_index = 0;
     game->points = 0;
 }
@@ -243,6 +313,9 @@ void display_result(struct Game *game)
         riv_draw_text("You need to study\nin order to get promoted.", RIV_SPRITESHEET_FONT_5X7,
                       RIV_CENTER, 128, 64, 1, RIV_COLOR_WHITE);
     }
+    riv_draw_text("press 'a' to continue.",
+                  RIV_SPRITESHEET_FONT_5X7,
+                  RIV_CENTER, 128, 230, 1, RIV_COLOR_BLUE);
 }
 
 void run_trivia(struct Game *game)
@@ -271,6 +344,7 @@ void run_game(struct Game *game)
     {
         game->fire_x = game->x;
         game->cool_down = game->cool_down_time;
+        riv_waveform(&shoot_sfx);
     }
     game->x += (int)game->x_momentum;
     game->x_momentum -= game->x_momentum * game->x_drag;
@@ -285,8 +359,9 @@ void run_game(struct Game *game)
     {
         game->e[i].y++;
         riv_draw_circle_fill(game->e[i].x, game->e[i].y, 8, RIV_COLOR_RED); // draw red dot
-        if (game->fire_x > 0 && game->e[i].y < game->y && game->e[i].x - 5 < game->fire_x && game->fire_x <= game->e[i].x + 4)
+        if (game->fire_x > 0 && game->e[i].y > -5 && game->e[i].y < game->y && game->e[i].x - 5 < game->fire_x && game->fire_x <= game->e[i].x + 4)
         {
+            riv_waveform(&explosion_sfx);
             game->points += 1;
             game->e[i].x = 28 + riv_rand_uint(200);
             game->e[i].y = -100;
@@ -306,7 +381,7 @@ void run_game(struct Game *game)
 
     if (game->points > game->next_level)
     {
-        game->next_level = (int)(game->points * 1.5);
+        game->next_level = (int)(game->points * 1.5) + 3;
         game->e[game->enemy_count].y = -10;
         game->e[game->enemy_count].x = 28 + riv_rand_uint(200);
         game->enemy_count++;
@@ -322,7 +397,7 @@ void run_game(struct Game *game)
     }
     else
     {
-        riv_draw_text(riv_tprintf("HP %d Points %d N %d", game->hp, game->points, game->trivia_game.points), RIV_SPRITESHEET_FONT_5X7,
+        riv_draw_text(riv_tprintf("HP %d Points %d\nInt %d", game->hp, game->points, game->trivia_game.points), RIV_SPRITESHEET_FONT_5X7,
                       RIV_CENTER, 128, 64, 1, RIV_COLOR_WHITE); // draw text
     }
     riv_draw_text("left, right, up, down to move.\n'x' to fire.",
@@ -330,9 +405,16 @@ void run_game(struct Game *game)
                   RIV_CENTER, 128, 230, 1, RIV_COLOR_BLUE);
 }
 
+void push_back_enemies(struct Game *game)
+{
+    for (int i = 0; i < game->enemy_count; i++)
+    {
+        game->e[i].y -= 180;
+    }
+}
+
 void main()
 { // entry point
-    riv_printf("Dave Raid");
     struct Game game;
     game.enemy_count = 1;
     game.x = 128, game.y = 170; // red dot position
@@ -345,7 +427,7 @@ void main()
     game.x_push = 0.7;
     game.x_drag = 0.08;
     game.hp = 10;
-    game.trivia = 1;
+    game.trivia = 0;
     for (int i = 0; i < NUM_ENEMIES; i++)
     {
         game.e[i].x = -10;
@@ -367,8 +449,9 @@ void main()
             {
                 game.trivia = 0;
                 game.trivia_game.trivia_step = 0;
-                game.trivia_game.selected = 0;
+                game.trivia_game.selected = riv_rand_uint(3);
                 game.trivia_game.current_question_index = riv_rand_uint(game.trivia_game.num_questions - 1);
+                push_back_enemies(&game);
             }
         }
     } while (riv_present()); // refresh screen and wait next frame
