@@ -504,7 +504,7 @@ void main()
     game.x_push = 0.7;
     game.x_drag = 0.08;
     game.hp = 10;
-    game.trivia = 0;
+    game.trivia = 1;
     for (int i = 0; i < NUM_ENEMIES; i++)
     {
         game.e[i].x = -10;
