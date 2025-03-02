@@ -48,33 +48,6 @@
 </head>
 
 <body>
-  <select name="cartridges" id="cartridges" onchange="rivemuUploadCartridge(this.value);" style="display: none"
-    autocomplete="off">
-    <option selected disabled hidden>Select Cartridge</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/antcopter.sqfs">GAME - Antcopter</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/2048.sqfs">GAME - 2048</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/snake.sqfs">GAME - Snake</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/freedoom.sqfs">GAME - Freedoom</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/monky.sqfs">GAME - Monky</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/tetrix.sqfs">GAME - Tetrix</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/coins.sqfs">DEMO - coins</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/hello-c.sqfs">DEMO - hello-c</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/bounce.sqfs">SAMPLE - bounce</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/circles.sqfs">SAMPLE - circles</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/hello.sqfs">SAMPLE - hello</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/lines.sqfs">SAMPLE - lines</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/many.sqfs">SAMPLE - many</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/particles.sqfs">SAMPLE - particles</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/waves.sqfs">SAMPLE - waves</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/waveform.sqfs">TOOL - Waveform</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/gamepad.sqfs">TOOL - Gamepad</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/palette.sqfs">TOOL - Palette</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/shapes.sqfs">TOOL - Shapes</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/text.sqfs">TOOL - Text</option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/text-anchor.sqfs">TOOL - Text Anchor
-    </option>
-    <option value="https://raw.githubusercontent.com/edubart/cartridges/main/seqtoy.sqfs">TOOL - Sequencer Toy</option>
-  </select>
   <div class="canvas-wrapper">
 
     <div id="gamepad" style="position: relative;">
@@ -102,27 +75,16 @@
 
     <canvas id="canvas" tabindex="-1" width="768" height="768" onclick="window.focus()"
       oncontextmenu="event.preventDefault()"></canvas>
-    <div id="canvas-drop" class="canvas-overlay canvas-noclick" style="display: none">
-      <div>
-        <div>
-          <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24">
-            <path fill="currentColor" d="m12 16l-5-5l1.4-1.45l2.6 2.6V4h2v8.15l2.6-2.6L17 11zm-8 4v-5h2v3h12v-3h2v5z" />
-          </svg>
-        </div>
-        Drop cartridge .sqfs file
-      </div>
-    </div>
-    <div id="canvas-load" class="canvas-overlay canvas-noclick" style="display: none">
-      <div>
-        <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24">
-          <path fill="currentColor" d="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8A8 8 0 0 1 12 20Z"
-            opacity="0.5" />
-          <path fill="currentColor" d="M20 12h2A10 10 0 0 0 12 2V4A8 8 0 0 1 20 12Z">
-            <animateTransform attributeName="transform" dur="1s" from="0 12 12" repeatCount="indefinite" to="360 12 12"
-              type="rotate" />
-          </path>
-        </svg>
-      </div>
+    <div id="canvas-load" class="canvas-overlay canvas-noclick"
+      style="display: none; justify-content: center; align-items: center;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8A8 8 0 0 1 12 20Z"
+          opacity="0.5" />
+        <path fill="currentColor" d="M20 12h2A10 10 0 0 0 12 2V4A8 8 0 0 1 20 12Z">
+          <animateTransform attributeName="transform" dur="1s" from="0 12 12" repeatCount="indefinite" to="360 12 12"
+            type="rotate" />
+        </path>
+      </svg>
     </div>
     <div id="canvas-start" class="canvas-overlay" style="display: none" onclick="rivemuStart()">
       <div class="svg-button">
@@ -134,7 +96,7 @@
     </div>
   </div>
   <div class="content-wrapper">
-    <div id="button-box">
+    <div id="button-box" style="display: none;">
       <button id="record" title="Record" onclick="rivemuRecord()" disabled autocomplete="off">
         <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
           <path fill="currentColor" d="M19 12c0 3.86-3.14 7-7 7s-7-3.14-7-7s3.14-7 7-7s7 3.14 7 7" />
@@ -315,10 +277,34 @@
   <script src="index.js"></script>
   <script async src="rivemu.js"></script>
   <script>
-    rivemuUploadCartridge("./main.sqfs")
+    (async () => {
+      let canvas = document.getElementById('canvas');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerWidth;
+      let loader = document.getElementById('canvas-load');
+      loader.style.height = window.innerWidth + 'px';
+      loader.style.width = window.innerWidth + 'px';
+      await rivemuUploadCartridge(window.cartridge || 'https://mainnet-v5.rives.io/data/cartridges/a612d46cd43f');
+      resizeCanvas()
+    })();
   </script>
   <script>
+    function resizeCanvas() {
+      const canvas = document.getElementById('canvas');
+      // const scaleFactor = Math.min(window.innerWidth / canvas.width, window.innerHeight / canvas.height);
+      console.log(`canvas.width=${canvas.width}`)
+      console.log(`canvas.height=${canvas.height}`)
+      canvas.style.position = 'absolute';
+      canvas.style.top = '0';
+      canvas.style.imageRendering = 'pixelated';
+      canvas.style.left = '0';
+      // canvas.style.transform = `scale(${scaleFactor})`;
+      canvas.style.transformOrigin = 'top left';
+      canvas.style.width = '100vw';
+      // canvas.style.height = '100vh';
+    }
     document.addEventListener("DOMContentLoaded", function () {
+      resizeCanvas();
       const pressed = {};
 
       const KEY_MAP = {
@@ -357,26 +343,31 @@
         const k = KEY_MAP[key];
         const event = new KeyboardEvent(isPressed ? 'keydown' : 'keyup', k);
         document.dispatchEvent(event);
-        document.body.style.backgroundColor = isPressed ? `rgb(100,100,${Math.floor(Math.random() * 255)})` : 'rgb(100,100,100)';
+        // document.body.style.backgroundColor = isPressed ? `rgb(100,100,${Math.floor(Math.random() * 255)})` : 'rgb(100,100,100)';
       };
 
-      const endTouches = (touches) => {
-        const pressed = {
-        };
+      const gamepadButtons = [];
+      document.querySelectorAll('.button, .joystick').forEach(el => {
+        const rect = el.getBoundingClientRect();
+        const key = el.id.replace('button', '').replace('joystick', 'Arrow');
+        gamepadButtons.push({
+          rect,
+          key
+        })
+      });
 
+
+      const endTouches = (touches) => {
+        const pressed = {};
         for (let i = 0; i < touches.length; i++) {
           touch = touches[i];
           const { clientX: x, clientY: y } = touch;
-          document.querySelectorAll('.button, .joystick').forEach(el => {
-            const rect = el.getBoundingClientRect();
-            if (x > rect.left && x < rect.right && y > rect.top && y < rect.bottom) {
-              const key = el.id.replace('button', '').replace('joystick', 'Arrow');
-              pressed[key] = false;
+          for (let btn of gamepadButtons) {
+            if (x > btn.rect.left && x < btn.rect.right && y > btn.rect.top && y < btn.rect.bottom) {
+              pressed[btn.key] = false;
             }
-          });
+          }
         }
-
-        console.log(pressed)
         for (const key in pressed) {
           if (pressed[key]) handleButtonPressIn(key);
           else handleButtonPressOut(key);
@@ -406,16 +397,14 @@
         for (let i = 0; i < touches.length; i++) {
           touch = touches[i];
           const { clientX: x, clientY: y } = touch;
-          document.querySelectorAll('.button, .joystick').forEach(el => {
-            const rect = el.getBoundingClientRect();
-            if (x > rect.left && x < rect.right && y > rect.top && y < rect.bottom) {
-              const key = el.id.replace('button', '').replace('joystick', 'Arrow');
-              pressed[key] = true;
+          for (let btn of gamepadButtons) {
+            if (x > btn.rect.left && x < btn.rect.right && y > btn.rect.top && y < btn.rect.bottom) {
+              pressed[btn.key] = true;
             }
-          });
+          }
         }
 
-        console.log(pressed)
+        // console.log(pressed)
         for (const key in pressed) {
           if (pressed[key]) handleButtonPressIn(key);
           else handleButtonPressOut(key);
@@ -424,19 +413,19 @@
 
       document.addEventListener('touchstart', (e) => {
         const touches = e.touches;
-        console.log(`Number of touches starting: ${touches.length}`);
+        // console.log(`Number of touches starting: ${touches.length}`);
         updateTouches(touches);
       }, false);
 
       document.addEventListener('touchmove', (e) => {
         const touches = e.touches;
-        console.log(`Number of touches moving: ${touches.length}`);
+        // console.log(`Number of touches moving: ${touches.length}`);
         updateTouches(touches);
       }, false);
 
       document.addEventListener('touchend', () => {
         const touches = event.changedTouches;
-        console.log(`Number of touches ending: ${touches.length}`);
+        // console.log(`Number of touches ending: ${touches.length}`);
         endTouches(touches, true);
       });
     });
