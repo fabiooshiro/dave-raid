@@ -56,16 +56,16 @@
       <div id="joystickLeft" class="joystick" style="left: 20px; top: 536px; width: 54px; height: 150px;"></div>
       <div id="joystickRight" class="joystick" style="left: 116px; top: 536px; width: 54px; height: 150px;"></div>
 
-      <div id="buttonS" class="button" style="left: 20px; top: 346px;"></div>
-      <div id="buttonA" class="button" style="left: 20px; top: 391px;"></div>
-      <div id="buttonD" class="button" style="left: 320px; top: 346px;"></div>
-      <div id="buttonF" class="button" style="left: 320px; top: 391px;"></div>
+      <div id="buttonS" class="button" style="left: 20px; top: 366px;"></div>
+      <div id="buttonA" class="button" style="left: 20px; top: 411px;"></div>
+      <div id="buttonD" class="button" style="left: 320px; top: 366px;"></div>
+      <div id="buttonF" class="button" style="left: 320px; top: 411px;"></div>
 
-      <div id="buttonW" class="button" style="left: 130px; top: 361px; height: 50px;"></div>
-      <div id="buttonE" class="button" style="left: 220px; top: 361px; height: 50px;"></div>
+      <div id="buttonW" class="button" style="left: 130px; top: 381px; height: 50px;"></div>
+      <div id="buttonE" class="button" style="left: 220px; top: 381px; height: 50px;"></div>
 
-      <div id="buttonQ" class="button" style="left: 130px; top: 405px; height: 50px;"></div>
-      <div id="buttonR" class="button" style="left: 220px; top: 405px; height: 50px;"></div>
+      <div id="buttonQ" class="button" style="left: 130px; top: 425px; height: 50px;"></div>
+      <div id="buttonR" class="button" style="left: 220px; top: 425px; height: 50px;"></div>
 
       <div id="buttonV" class="joystick" style="left: 234px; top: 532px; width: 150px; height: 50px;"></div>
       <div id="buttonZ" class="joystick" style="left: 234px; top: 630px; width: 150px; height: 50px;"></div>
@@ -284,7 +284,7 @@
       let loader = document.getElementById('canvas-load');
       loader.style.height = window.innerWidth + 'px';
       loader.style.width = window.innerWidth + 'px';
-      await rivemuUploadCartridge(window.cartridge || 'https://mainnet-v5.rives.io/data/cartridges/a612d46cd43f');
+      await rivemuUploadCartridge(window.cartridge || 'https://raw.githubusercontent.com/edubart/cartridges/main/gamepad.sqfs');
       resizeCanvas()
     })();
   </script>
@@ -303,8 +303,39 @@
       canvas.style.width = '100vw';
       // canvas.style.height = '100vh';
     }
+
+    function moveGamepadToBottom() {
+      let maxH = 0;
+      document.querySelectorAll('.button, .joystick').forEach(el => {
+        const rect = el.getBoundingClientRect();
+        maxH = Math.max(rect.bottom, maxH)
+      });
+      const gamePadPaddingBottom = 20;
+      const diffH = window.innerHeight - maxH - gamePadPaddingBottom;
+      document.querySelectorAll('.button, .joystick').forEach(el => {
+        const rect = el.getBoundingClientRect();
+        el.style.top = `${rect.top + diffH}px`;
+      });
+    }
+
+    function getGamepadButtons() {
+      const gamepadButtons = [];
+      document.querySelectorAll('.button, .joystick').forEach(el => {
+        const rect = el.getBoundingClientRect();
+        const key = el.id.replace('button', '').replace('joystick', 'Arrow');
+        gamepadButtons.push({
+          rect,
+          key,
+        })
+      });
+      return gamepadButtons;
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
       resizeCanvas();
+      moveGamepadToBottom();
+      const gamepadButtons = getGamepadButtons();
+
       const pressed = {};
 
       const KEY_MAP = {
@@ -345,17 +376,6 @@
         document.dispatchEvent(event);
         // document.body.style.backgroundColor = isPressed ? `rgb(100,100,${Math.floor(Math.random() * 255)})` : 'rgb(100,100,100)';
       };
-
-      const gamepadButtons = [];
-      document.querySelectorAll('.button, .joystick').forEach(el => {
-        const rect = el.getBoundingClientRect();
-        const key = el.id.replace('button', '').replace('joystick', 'Arrow');
-        gamepadButtons.push({
-          rect,
-          key
-        })
-      });
-
 
       const endTouches = (touches) => {
         const pressed = {};
