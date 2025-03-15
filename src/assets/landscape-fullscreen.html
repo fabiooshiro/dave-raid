@@ -62,26 +62,27 @@
   <div class="canvas-wrapper">
 
     <div id="gamepad" style="position: relative;">
-      <div id="joystickUp" class="joystick" style="left: 20px; top: 536px; width: 150px; height: 54px;"></div>
+      <!-- <div id="joystickUp" class="joystick" style="left: 20px; top: 536px; width: 150px; height: 54px;"></div>
       <div id="joystickDown" class="joystick" style="left: 20px; top: 630px; width: 150px; height: 54px;"></div>
       <div id="joystickLeft" class="joystick" style="left: 20px; top: 536px; width: 54px; height: 150px;"></div>
-      <div id="joystickRight" class="joystick" style="left: 116px; top: 536px; width: 54px; height: 150px;"></div>
+      <div id="joystickRight" class="joystick" style="left: 116px; top: 536px; width: 54px; height: 150px;"></div> -->
 
       <div id="buttonS" class="button" style="left: 20px; top: 366px;"></div>
-      <div id="buttonA" class="button" style="left: 20px; top: 411px;"></div>
-      <div id="buttonD" class="button" style="left: 320px; top: 366px;"></div>
-      <div id="buttonF" class="button" style="left: 320px; top: 411px;"></div>
+      <div id="buttonA" class="button" style="left: 20px; top: 411px; width: 66px; height: 100px;"></div>
+      <div id="buttonD" class="button" style="right: 20px; top: 366px;"></div>
+
+      <div id="buttonF" class="button" style="right: 20px; top: 411px; width: 66px; height: 100px;"></div>
 
       <div id="buttonW" class="button" style="left: 130px; top: 381px; height: 50px;"></div>
-      <div id="buttonE" class="button" style="left: 220px; top: 381px; height: 50px;"></div>
+      <div id="buttonE" class="button" style="right: 120px; top: 381px; height: 50px;"></div>
 
       <div id="buttonQ" class="button" style="left: 130px; top: 425px; height: 50px;"></div>
-      <div id="buttonR" class="button" style="left: 220px; top: 425px; height: 50px;"></div>
+      <div id="buttonR" class="button" style="right: 120px; top: 425px; height: 50px;"></div>
 
-      <div id="buttonV" class="joystick" style="left: 234px; top: 532px; width: 150px; height: 50px;"></div>
-      <div id="buttonZ" class="joystick" style="left: 234px; top: 630px; width: 150px; height: 50px;"></div>
-      <div id="buttonC" class="joystick" style="left: 234px; top: 532px; width: 50px; height: 150px;"></div>
-      <div id="buttonX" class="joystick" style="left: 336px; top: 532px; width: 50px; height: 150px;"></div>
+      <div id="buttonV" class="joystick" style="right: 20px; top: 532px; width: 150px; height: 50px;"></div>
+      <div id="buttonZ" class="joystick" style="right: 20px; top: 630px; width: 150px; height: 50px;"></div>
+      <div id="buttonC" class="joystick" style="right: 120px; top: 532px; width: 50px; height: 150px;"></div>
+      <div id="buttonX" class="joystick" style="right: 20px; top: 532px; width: 50px; height: 150px;"></div>
     </div>
 
     <canvas id="canvas" tabindex="-1" width="768" height="768" onclick="window.focus()"
@@ -295,25 +296,26 @@
       let loader = document.getElementById('canvas-load');
       loader.style.height = window.innerWidth + 'px';
       loader.style.width = window.innerWidth + 'px';
-      await rivemuUploadCartridge(window.cartridge || 'https://raw.githubusercontent.com/edubart/cartridges/main/gamepad.sqfs');
-      resizeCanvas()
     })();
   </script>
   <script>
     function resizeCanvas() {
       const canvas = document.getElementById('canvas');
-      // const scaleFactor = Math.min(window.innerWidth / canvas.width, window.innerHeight / canvas.height);
-      console.log(`canvas.width=${canvas.width}`)
-      console.log(`canvas.height=${canvas.height}`)
+      canvas.style.height = '100vh';
+      canvas.style.width = `${(canvas.width/canvas.height)*100}vh`;
+      const canvasWidth = canvas.getBoundingClientRect().width;
+      const left = (window.innerWidth/2) - (canvasWidth/2);
+      console.log(`canvas.width=${canvas.width}`);
+      console.log(`canvas.height=${canvas.height}`);
+      console.log(`canvas.left`, left);
       canvas.style.position = 'absolute';
       canvas.style.top = '0';
       canvas.style.imageRendering = 'pixelated';
-      canvas.style.left = '0';
-      // canvas.style.transform = `scale(${scaleFactor})`;
+      canvas.style.left = `${left}px`;
       canvas.style.transformOrigin = 'top left';
-      canvas.style.width = '100vw';
-      // canvas.style.height = '100vh';
     }
+
+    setInterval(() => resizeCanvas(), 3000);
 
     function moveGamepadToBottom() {
       let maxH = 0;
@@ -321,7 +323,7 @@
         const rect = el.getBoundingClientRect();
         maxH = Math.max(rect.bottom, maxH)
       });
-      const gamePadPaddingBottom = 20;
+      const gamePadPaddingBottom = -20;
       const diffH = window.innerHeight - maxH - gamePadPaddingBottom;
       document.querySelectorAll('.button, .joystick').forEach(el => {
         const rect = el.getBoundingClientRect();
@@ -385,7 +387,6 @@
         const k = KEY_MAP[key];
         const event = new KeyboardEvent(isPressed ? 'keydown' : 'keyup', k);
         document.dispatchEvent(event);
-        // document.body.style.backgroundColor = isPressed ? `rgb(100,100,${Math.floor(Math.random() * 255)})` : 'rgb(100,100,100)';
       };
 
       const endTouches = (touches) => {
@@ -419,10 +420,10 @@
           W: false,
           Q: false,
           R: false,
-          ArrowRight: false,
-          ArrowLeft: false,
-          ArrowDown: false,
-          ArrowUp: false
+          // ArrowRight: false,
+          // ArrowLeft: false,
+          // ArrowDown: false,
+          // ArrowUp: false
         };
 
         for (let i = 0; i < touches.length; i++) {
@@ -464,23 +465,21 @@
         if (!window.__deviceOrientation || !window.__deviceOrientation.enabled) {
           return;
         }
-        const absolute = event.absolute;
-        const alpha = event.alpha;
-        const beta = event.beta;
-        const gamma = event.gamma;
+        const gammaUpDown = event.gamma;
+        const betaLeftRight = event.beta;
 
-        if (gamma > window.__deviceOrientation.right) {
+        if (betaLeftRight > window.__deviceOrientation.right) {
           handleButtonPressIn('ArrowRight');
-        } else if (gamma < window.__deviceOrientation.left) {
+        } else if (betaLeftRight < window.__deviceOrientation.left) {
           handleButtonPressIn('ArrowLeft');
         } else {
           handleButtonPressOut('ArrowRight');
           handleButtonPressOut('ArrowLeft');
         }
 
-        if (beta < window.__deviceOrientation.up) {
+        if (gammaUpDown > window.__deviceOrientation.up) {
           handleButtonPressIn('ArrowUp');
-        } else if (beta > window.__deviceOrientation.down) {
+        } else if (gammaUpDown < window.__deviceOrientation.down) {
           handleButtonPressIn('ArrowDown');
         } else {
           handleButtonPressOut('ArrowUp');
