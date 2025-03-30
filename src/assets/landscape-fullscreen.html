@@ -297,17 +297,15 @@
       loader.style.height = window.innerWidth + 'px';
       loader.style.width = window.innerWidth + 'px';
     })();
-  </script>
-  <script>
     function resizeCanvas() {
       const canvas = document.getElementById('canvas');
       canvas.style.height = '100vh';
       canvas.style.width = `${(canvas.width/canvas.height)*100}vh`;
       const canvasWidth = canvas.getBoundingClientRect().width;
       const left = (window.innerWidth/2) - (canvasWidth/2);
-      console.log(`canvas.width=${canvas.width}`);
-      console.log(`canvas.height=${canvas.height}`);
-      console.log(`canvas.left`, left);
+      // console.log(`canvas.width=${canvas.width}`);
+      // console.log(`canvas.height=${canvas.height}`);
+      // console.log(`canvas.left`, left);
       canvas.style.position = 'absolute';
       canvas.style.top = '0';
       canvas.style.imageRendering = 'pixelated';
@@ -510,10 +508,8 @@
       window.addEventListener("deviceorientation", handleOrientation);
     });
   </script>
-  <!-- <script>
-    async function sha256sum(data) {
-    }
-  </script> -->
+  <script type="module" src="./submit.js"></script>
+  <script src="./index-overrides.js"></script>
 </body>
 
 </html>

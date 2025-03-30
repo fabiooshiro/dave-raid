@@ -40,7 +40,6 @@ let cartsizeElem = document.getElementById("cartsize");
 let carthashElem = document.getElementById("carthash");
 let cartridgesElem = document.getElementById("cartridges");
 let analysisBoxElem = document.getElementById("analysis-box");
-let infoBoxElem = document.getElementById("info-box");
 let changeSpeedElem = document.getElementById("change-speed");
 let canvasDropElem = document.getElementById("canvas-drop");
 let canvasStartElem = document.getElementById("canvas-start");
@@ -97,16 +96,21 @@ Module.onRuntimeInitialized = function(status) {
 
 // Return SHA256 hexadecimal string from a chunk of data.
 async function sha256sum(data) {
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-  return hashHex;
+  try {
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+    return hashHex;
+  } catch(e) {
+    console.error(e)
+    return "";
+  }
 }
 
 // Show an element.
 function showFlexElem(el) {
   if (!el || !el.style) {
-      return
+    return
   }
   el.style.display = "flex";
 }
@@ -114,7 +118,7 @@ function showFlexElem(el) {
 // Show an element.
 function showBlockElem(el) {
   if (!el || !el.style) {
-      return
+    return
   }
   el.style.display = "block";
 }
@@ -122,7 +126,7 @@ function showBlockElem(el) {
 // Show an element.
 function hideElem(el) {
   if (!el || !el.style) {
-      return
+    return
   }
   el.style.display = "none";
 }
@@ -263,14 +267,6 @@ async function rivemuBeforeStart(tape, cartridge, incard, entropy, args) {
   document.getElementById('record').disabled = false;
   document.getElementById('replay').disabled = false;
   document.getElementById('download_cartridge').disabled = false;
-
-  // Clear info
-  (document.getElementById('name')||{}).textContent = 'N/A';
-  (document.getElementById('summary')||{}).textContent = 'N/A';
-  (document.getElementById('description')||{}).textContent = 'N/A';
-  (document.getElementById('tags')||{}).innerHTML = 'N/A';
-  (document.getElementById('links')||{}).innerHTML = 'N/A';
-  (document.getElementById('authors')||{}).innerHTML = 'N/A';
 }
 
 function resetCanvasSize() {
@@ -278,18 +274,12 @@ function resetCanvasSize() {
   canvasElem.height = 768;
 }
 
-async function rivemuUpload(cartridgeUrl, incardUrl, tapeUrl, autoPlay, argsParam, entropyParam, fullTapeUrl) {
+async function rivemuUpload(cartridgeUrl, incardUrl, tapeUrl, autoPlay) {
   hideElem(cartridgesElem);
   hideElem(canvasDropElem);
   await rivemuStop();
   resetCanvasSize();
   statusElem.textContent = "Downloading cartridge...";
-  if (argsParam) {
-    argsElem.value = argsParam;
-  }
-  if (entropyParam) {
-    entropyElem.value = entropyParam;
-  }
   lastCartridge = cartridgeUrl ? await downloadFile(cartridgeUrl) : await uploadFileDialog(".sqfs");
   if (tapeUrl) {
     statusElem.textContent = "Downloading tape...";
@@ -299,17 +289,6 @@ async function rivemuUpload(cartridgeUrl, incardUrl, tapeUrl, autoPlay, argsPara
     statusElem.textContent = "Downloading incard...";
     lastIncard = incardUrl ? await downloadFile(incardUrl) : await uploadTapeDialog(".rivcard");
   }
-  if (fullTapeUrl) {
-    statusElem.textContent = "Downloading full tape...";
-    var fullTapeBytes = await downloadFile(fullTapeUrl);
-    const jsonString = textDecoder.decode(fullTapeBytes);
-    const fullTape = JSON.parse(jsonString);
-    if (fullTape.tape) lastTape = Uint8Array.from(atob(fullTape.tape), c => c.charCodeAt(0))
-    if (fullTape.incard) lastIncard = Uint8Array.from(atob(fullTape.incard), c => c.charCodeAt(0));
-    if (fullTape.args) argsElem.value = fullTape.args;
-    if (fullTape.entropy) entropyElem.value = fullTape.entropy;
-  }
-  statusElem.textContent = "Idle";
   if (autoPlay) {
     rivemuStart();
   } else {
@@ -478,55 +457,8 @@ function rivemuToggleAnalysis() {
   toggleElemVisibility(analysisBoxElem);
 }
 
-function rivemuToggleInfo() {
-  toggleElemVisibility(infoBoxElem);
-}
-
-async function updateInfo(info) {
-  document.getElementById('name').textContent = info.name;
-  document.getElementById('summary').textContent = info.summary;
-  document.getElementById('description').textContent = info.description;
-  document.getElementById('tags').textContent = '';
-  document.getElementById('links').textContent = '';
-  document.getElementById('authors').textContent = '';
-  // tags
-  if (info.tags) {
-    info.tags.forEach(function(tag) {
-      let e = document.createElement('span');
-      e.textContent = tag;
-      document.getElementById('tags').append(e);
-    });
-  }
-  // links
-  if (info.links) {
-    info.links.forEach(function(link) {
-      let e = document.createElement('a');
-      e.href = link;
-      e.textContent = link;
-      document.getElementById('links').append(e);
-    });
-  }
-  // authors
-  if (info.authors) {
-    info.authors.forEach(function(author) {
-      let e = document.createElement('a');
-      e.textContent = author.name;
-      e.href = author.link;
-      document.getElementById('authors').append(e);
-    });
-  }
-}
-
 // Called by RIVEMU before the first frame.
-function rivemu_on_begin(width, height, target_fps, total_frames, info_data) {
-  if (info_data.length > 0) {
-    try {
-      let info = JSON.parse(textDecoder.decode(info_data));
-      updateInfo(info);
-    } catch(e) {
-      console.warn("Failed to parse cartridge info.json:", e);
-    }
-  }
+function rivemu_on_begin(width, height, target_fps, total_frames) {
   lastFrame = 0;
   lastTotalFrames = total_frames;
   lastTargetFps = target_fps;
@@ -547,11 +479,11 @@ async function rivemu_on_finish(tape, outcard, outhash) {
   lastTape = new Uint8Array(tape);
   lastOutcard = new Uint8Array(outcard);
   // Show outcard
-  // let outcard_str = textDecoder.decode(outcard);
-  // if (outcard_str.substring(0, 4) == 'JSON') {
-  //   let scores = JSON.parse(outcard_str.substring(4));
-  //   console.log(scores);
-  // }
+  let outcard_str = textDecoder.decode(outcard);
+  if (outcard_str.substring(0, 4) == 'JSON') {
+    let scores = JSON.parse(outcard_str.substring(4));
+    console.log(scores);
+  }
   // Update buttons
   paused = false;
   document.getElementById('pause').disabled = true;
@@ -567,7 +499,6 @@ async function rivemu_on_finish(tape, outcard, outhash) {
   outsizeElem.textContent = outcard.length + " B";
   tapesizeElem.textContent = tape.length + " B";
   tapehashElem.textContent = await sha256sum(tape);
-  window.parent.postMessage({ rivemuOnFinish: true, tape:lastTape, outcard:lastOutcard, outhash:outhash }, '*');
 }
 
 // Called by RIVEMU on every frame.
@@ -593,72 +524,34 @@ function rivemu_on_frame(outcard, frame, cycles, fps, cpu_cost, cpu_speed, cpu_u
   }
 }
 
-async function rivemuReset() {
-  await rivemuStop();
-  lastEntropy = '';
-  lastArgs = '';
-  lastIncard = new Uint8Array([]);
-  lastOutcard = null;
-  lastTape = null;
-  lastCartridge = null;
-  lastFrame = null;
-  lastTotalFrames = null;
-  lastTargetFps = null;
-  statusBeforePause = null;
-  paused = false;
-  speed = 1;
+// Parse params
+let hash = window.location.hash.substr(1);
+let params = hash.split('&').reduce(function (res, item) {
+    var parts = item.split('=');
+    res[parts[0]] = parts[1];
+    return res;
+}, {});
+
+// Show or hide elements based on params
+if (params.editor) {
+  showFlexElem(canvasLoadElem);
+} else {
+  showBlockElem(cartridgesElem);
+  showFlexElem(canvasDropElem);
+}
+if (params.nocontrols) {
+  hideElem(document.getElementById('button-box'));
+}
+if (params.simple) {
+  hideElem(document.getElementById('pause'));
+  hideElem(document.getElementById('change-speed'));
+  hideElem(document.getElementById('analyze'));
 }
 
-function rivemuGo() {
-  // Parse params
-  let hash = window.location.hash.substr(1);
-  let params = hash.split('&').reduce(function (res, item) {
-      var parts = item.split('=');
-      res[parts[0]] = parts[1];
-      return res;
-  }, {});
-
-  // Show or hide elements based on params
-  hideElem(canvasStartElem);
-  if (params.editor) {
-    showFlexElem(canvasLoadElem);
-    hideElem(cartridgesElem);
-    hideElem(canvasDropElem);
-  } else {
-    hideElem(canvasLoadElem);
-    showBlockElem(cartridgesElem);
-    showFlexElem(canvasDropElem);
-  }
-  if (params.nocontrols) {
-    hideElem(document.getElementById('button-box'));
-  } else {
-    showFlexElem(document.getElementById('button-box'));
-  }
-  if (params.simple) {
-    hideElem(document.getElementById('pause'));
-    hideElem(document.getElementById('change-speed'));
-    hideElem(document.getElementById('analyze'));
-    hideElem(document.getElementById('info'));
-  } else {
-    showFlexElem(document.getElementById('pause'));
-    showFlexElem(document.getElementById('change-speed'));
-    showFlexElem(document.getElementById('analyze'));
-    showFlexElem(document.getElementById('info'));
-  }
-
-  // Play external cartridge
-  if (params.cartridge) {
-    rivemuUpload(params.cartridge, params.incard, params.tape, params.autoplay, params.args, params.entropy, params.fullTape);
-  }
-
+// Play external cartridge
+if (params.cartridge) {
+  rivemuUpload(params.cartridge, params.incard, params.tape, params.autoplay);
 }
-
-window.onhashchange = async function() {
-  await rivemuReset();
-  rivemuGo();
-}
-
-rivemuGo();
 
 // Send event to parent window when the page is loaded
 window.parent.postMessage({ rivemuLoaded: true }, '*');
