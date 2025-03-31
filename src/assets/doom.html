@@ -59,6 +59,7 @@
 </head>
 
 <body>
+  <div style="position: absolute; right: 0; bottom: 0;">Free Doom</div>
   <div class="canvas-wrapper">
 
     <div id="gamepad" style="position: relative;">
@@ -79,10 +80,10 @@
       <div id="buttonQ" class="button" style="left: 130px; top: 425px; height: 50px;"></div>
       <div id="buttonR" class="button" style="right: 120px; top: 425px; height: 50px;"></div>
 
-      <div id="buttonV" class="joystick" style="right: 20px; top: 532px; width: 150px; height: 50px;"></div>
-      <div id="buttonZ" class="joystick" style="right: 20px; top: 630px; width: 150px; height: 50px;"></div>
-      <div id="buttonC" class="joystick" style="right: 120px; top: 532px; width: 50px; height: 150px;"></div>
-      <div id="buttonX" class="joystick" style="right: 20px; top: 532px; width: 50px; height: 150px;"></div>
+      <div id="buttonV" class="joystick" style="right: 20px; top: 532px; width: 150px; height: 50px;">V</div>
+      <div id="buttonZ" class="joystick" style="right: 20px; top: 630px; width: 150px; height: 50px;">Z</div>
+      <div id="buttonC" class="joystick" style="right: 120px; top: 532px; width: 50px; height: 150px;">C</div>
+      <div id="buttonX" class="joystick" style="right: 20px; top: 532px; width: 50px; height: 150px;">X</div>
     </div>
 
     <canvas id="canvas" tabindex="-1" width="768" height="768" onclick="window.focus()"
@@ -300,9 +301,9 @@
     function resizeCanvas() {
       const canvas = document.getElementById('canvas');
       canvas.style.height = '100vh';
-      canvas.style.width = `${(canvas.width/canvas.height)*100}vh`;
+      canvas.style.width = `${(canvas.width / canvas.height) * 100}vh`;
       const canvasWidth = canvas.getBoundingClientRect().width;
-      const left = (window.innerWidth/2) - (canvasWidth/2);
+      const left = (window.innerWidth / 2) - (canvasWidth / 2);
       // console.log(`canvas.width=${canvas.width}`);
       // console.log(`canvas.height=${canvas.height}`);
       // console.log(`canvas.left`, left);
@@ -473,6 +474,18 @@
         } else {
           handleButtonPressOut('ArrowRight');
           handleButtonPressOut('ArrowLeft');
+
+          // Accelerate only in a straight line
+          if (gammaUpDown > window.__deviceOrientation.up + 5) {
+            handleButtonPressIn('Z');
+            document.getElementById('buttonZ').style.background = `rgba(0,0,255,0.3)`
+          } else if (gammaUpDown < window.__deviceOrientation.down - 5) {
+            handleButtonPressIn('Z');
+            document.getElementById('buttonZ').style.background = `rgba(0,0,255,0.3)`
+          } else {
+            handleButtonPressOut('Z');
+            document.getElementById('buttonZ').style.background = `rgba(255,0,0,0.3)`
+          }
         }
 
         if (gammaUpDown > window.__deviceOrientation.up) {

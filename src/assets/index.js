@@ -539,6 +539,9 @@ function rivemu_on_begin(width, height, target_fps, total_frames, info_data) {
   } else {
     statusElem.textContent = "Recording...";
   }
+  if (typeof resizeCanvas === 'function') {
+    resizeCanvas();
+  }
 }
 
 // Called by RIVEMU after the last frame.
